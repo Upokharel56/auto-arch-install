@@ -4,11 +4,11 @@
 set -e
 
 # Variables
-DISK_PART="/dev/sdXn"    # Replace with your 200GB partition
-EFI_PART="/dev/sdYn"     # Replace with your EFI partition
-HOSTNAME="arch"
+DISK_PART="/dev/nvme0n1p7"    # Replace with your 200GB partition
+EFI_PART="/dev/nvme0n1p6"     # Replace with your EFI partition
+HOSTNAME="skywalker"     # Default hostname
 USERNAME="Rip hunter"    # Default username
-PASSWORD="3010"          # Default password
+PASSWORD="2005"          # Default password
 
 # Mount partitions
 echo "Mounting partitions..."
@@ -59,7 +59,7 @@ nvidia_config=${nvidia_config:-yes}
 
 if [[ "$nvidia_config" =~ ^(yes|y|YES|Y)?$ ]]; then
   echo "Fetching NVIDIA configuration script..."
-  curl -LO https://raw.githubusercontent.com/yourusername/repo/main/nvidia-config.sh
+  curl -LO https://raw.githubusercontent.com/Upokharel56/auto-arch-install/refs/heads/main/nvidia-config.sh
   chmod +x nvidia-config.sh
   ./nvidia-config.sh
 fi
@@ -69,7 +69,7 @@ intel_config=${intel_config:-yes}
 
 if [[ "$intel_config" =~ ^(yes|y|YES|Y)?$ ]]; then
   echo "Fetching Intel configuration script..."
-  curl -LO https://raw.githubusercontent.com/yourusername/repo/main/intel-config.sh
+  curl -LO https://raw.githubusercontent.com/Upokharel56/auto-arch-install/refs/heads/main/intel-config.sh
   chmod +x intel-config.sh
   ./intel-config.sh
 fi
@@ -80,6 +80,21 @@ pacman -S --noconfirm grub efibootmgr
 grub-install --target=x86_64-efi --efi-directory=/boot --bootloader-id=Arch
 grub-mkconfig -o /boot/grub/grub.cfg
 EOF
+
+
+echo "Fetching post-installation script..."
+curl -LO https://raw.githubusercontent.com/Upokharel56/auto-arch-install/refs/heads/main/post_install.sh
+chmod +x post_install.sh
+./post_install.sh
+
+
+echo "Fetching refinements script..."
+curl -LO https://raw.githubusercontent.com/Upokharel56/auto-arch-install/refs/heads/main/refinements.sh
+chmod +x refinements.sh
+./refinements.sh    # Run refinements script
+
+
+
 
 # Unmount partitions and finish
 echo "Unmounting partitions..."
